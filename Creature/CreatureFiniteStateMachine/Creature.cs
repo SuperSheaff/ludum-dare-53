@@ -212,11 +212,7 @@ public class Creature : MonoBehaviour
 
         public void LayEgg()
         {
-            Debug.Log("Reach 1");
-            GameObject eggObject = Instantiate(CreaturePrefab, transform.position, Quaternion.identity, CreaturesContainer.transform);
-            Debug.Log("Reach 2");
-            Creature eggCreature = eggObject.GetComponent<Creature>();
-            Debug.Log("Reach 3");
+            Instantiate(CreaturePrefab, transform.position, transform.rotation, CreaturesContainer.transform);
         }
 
     #endregion
