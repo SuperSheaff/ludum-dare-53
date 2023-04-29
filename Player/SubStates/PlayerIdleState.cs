@@ -40,16 +40,20 @@ public class PlayerIdleState : PlayerParentState
                 stateMachine.ChangeState(player.MoveState);
             } 
 
-            if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
+            if (Time.time >= player.GetInteractCooldownStartTime() + player.GetInteractCooldownTime())
             {
-                melon = player.GetTouchedMelon();
-
-                if (melon != null)
+                if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
                 {
-                    melon.DisableMelon();
-                    player.SetCarriedMelon(melon);
-                    player.SetIsCarryingMelon(true);
-                    stateMachine.ChangeState(player.CarryMelonIdleState);
+                    melon = player.GetTouchedMelon();
+
+                    if (melon != null)
+                    {
+                        melon.DisableMelon();
+                        player.SetCarriedMelon(melon);
+                        player.SetIsCarryingMelon(true);
+                        player.StartInteractCooldown();
+                        stateMachine.ChangeState(player.CarryMelonIdleState);
+                    }
                 }
             }
         }

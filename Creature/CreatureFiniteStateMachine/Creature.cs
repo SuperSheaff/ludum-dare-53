@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Creature : MonoBehaviour
 {
 
     #region State Variables
 
-        public PlayerStateMachine           StateMachine        { get; private set; }
+        public CreatureStateMachine           StateMachine        { get; private set; }
 
-        public PlayerIdleState              IdleState           { get; private set; }
-        public PlayerMoveState              MoveState           { get; private set; }
-        public PlayerCarryMelonIdleState    CarryMelonIdleState { get; private set; }
-        public PlayerCarryMelonMoveState    CarryMelonMoveState { get; private set; }
+        public CreatureIdleState              IdleState           { get; private set; }
+        public CreatureMoveState              MoveState           { get; private set; }
 
         [SerializeField]
-        private PlayerData playerData;
+        private CreatureData creatureData;
 
         [SerializeField]
         public GameController gameController;
@@ -30,12 +28,11 @@ public class Player : MonoBehaviour
 
         [SerializeField]
 
-        public Core                 Core                { get; private set; }
-        public Animator             playerAnimator      { get; private set; }
-        public PlayerInputHandler   InputHandler        { get; private set; }
-        public Rigidbody2D          playerRigidBody     { get; private set; }
-        public BoxCollider2D        playerBoxCollider   { get; private set; }
-        public PlayerAudioManager   playerAudioManager  { get; private set; }
+        public Core                     Core                    { get; private set; }
+        public Animator                 creatureAnimator        { get; private set; }
+        public Rigidbody2D              creatureRigidBody       { get; private set; }
+        public BoxCollider2D            creatureBoxCollider     { get; private set; }
+        public CreatureAudioManager     creatureAudioManager    { get; private set; }
 
     #endregion
 
@@ -61,7 +58,6 @@ public class Player : MonoBehaviour
     #region Other Variables
 
         private float interactCooldownStartTime = 0f;
-
         private Vector2 workspace;
         private Vector2 referenceVelocity;
 
@@ -73,20 +69,17 @@ public class Player : MonoBehaviour
 
             Core = GetComponentInChildren<Core>();
 
-            StateMachine        = new PlayerStateMachine();
+            StateMachine        = new CreatureStateMachine();
 
-            IdleState           = new PlayerIdleState(this, StateMachine, playerData, "idle");
-            MoveState           = new PlayerMoveState(this, StateMachine, playerData, "move");
-            CarryMelonIdleState = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "carryMelonIdle");
-            CarryMelonMoveState = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "carryMelonMove");
+            IdleState           = new CreatureIdleState(this, StateMachine, creatureData, "idle");
+            MoveState           = new CreatureMoveState(this, StateMachine, creatureData, "move");
         }
 
         private void Start() {
-            playerAnimator      = GetComponent<Animator>();
-            InputHandler        = GetComponent<PlayerInputHandler>();
-            playerRigidBody     = GetComponent<Rigidbody2D>();
-            playerBoxCollider   = GetComponent<BoxCollider2D>();
-            playerAudioManager  = GetComponent<PlayerAudioManager>();
+            creatureAnimator      = GetComponent<Animator>();
+            creatureRigidBody     = GetComponent<Rigidbody2D>();
+            creatureBoxCollider   = GetComponent<BoxCollider2D>();
+            creatureAudioManager  = GetComponent<CreatureAudioManager>();
 
             StateMachine.Initialize(IdleState);
 
@@ -98,19 +91,6 @@ public class Player : MonoBehaviour
         private void Update() {
             Core.LogicUpdate();
             StateMachine.CurrentState.LogicUpdate();   
-
-
-            
-
-             // check if the interact button was pressed
-            // if (InputHandler.InteractButtonPressed)
-            // {
-            //     if (Time.time > player.interactCooldown)
-            //     {
-            //         player.interactCooldown = Time.time + player.interactCooldownDuration;
-            //         OnInteractInput?.Invoke();
-            //     }
-            // }
         }
 
         private void FixedUpdate() {
@@ -177,17 +157,17 @@ public class Player : MonoBehaviour
 
         public float GetTotalMoveSpeed()
         {
-            return playerData.baseMoveSpeed;
+            return creatureData.baseMoveSpeed;
         }
 
         public float GetTotalMoveSmoothing()
         {
-            return playerData.baseMoveSmoothing;
+            return creatureData.baseMoveSmoothing;
         }
 
         public float GetInteractCooldownTime() 
         {
-            return playerData.InteractCooldownTime;
+            return creatureData.InteractCooldownTime;
         }
 
         public float GetInteractCooldownStartTime() 

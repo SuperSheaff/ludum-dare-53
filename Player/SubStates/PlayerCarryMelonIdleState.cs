@@ -41,25 +41,20 @@ public class PlayerCarryMelonIdleState : PlayerParentState
             } 
         }
 
-        if (interactButtonPressed)
+        if (Time.time >= player.GetInteractCooldownStartTime() + player.GetInteractCooldownTime())
         {
-            if (melon != null)
+            if (interactButtonPressed)
             {
-                melon.DisableMelon();
-                player.SetCarriedMelon(melon);
-                player.SetIsCarryingMelon(true);
-                stateMachine.ChangeState(player.CarryMelonIdleState);
+                if (melon != null)
+                {
+                    melon.EnableMelon();
+                    player.SetCarriedMelon(null);
+                    player.SetIsCarryingMelon(false);
+                    melon.transform.position = player.transform.position + new Vector3(0, 1, 0);
+                    player.StartInteractCooldown();
+                    stateMachine.ChangeState(player.IdleState);
+                }
             }
-
-            if (melon != null)
-            {
-                melon.EnableMelon();
-                player.SetCarriedMelon(null);
-                player.SetIsCarryingMelon(false);
-                melon.transform.position = player.transform.position + new Vector3(0, 1, 0);
-                stateMachine.ChangeState(player.IdleState);
-            }
-
         }
     }
 
