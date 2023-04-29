@@ -13,17 +13,20 @@ public class PlayerInputHandler : MonoBehaviour
     public int NormInputY               { get; private set; }
 
     public bool InteractButtonPressed   { get; private set; }
-    public float InteractCooldown = 0.5f; // The cooldown period for the interact button
-    
-    private float lastInteractTime; // The time when the interact button was last pressed
+    public float InteractCooldown = 0.25f; // The cooldown period for the interact button
+
+    private float lastInteractTime = 0f; // The time when the interact button was last pressed
 
 
     [SerializeField]
 
-    private void Start() {
+    private void Start() 
+    {
     }
 
-    private void Update() {
+    private void Update() 
+    {
+        lastInteractTime += Time.deltaTime;
     }
 
     public void OnMoveInput(InputAction.CallbackContext context) 
@@ -37,9 +40,10 @@ public class PlayerInputHandler : MonoBehaviour
     public void OnInteractInput(InputAction.CallbackContext context) 
     {
 
-        if (!InteractButtonPressed && context.started)
+        if (!InteractButtonPressed && context.started && lastInteractTime >= InteractCooldown)
         {
             InteractButtonPressed = true;
+            lastInteractTime = 0f;
             // handle initial key press down here
         }
         else if (InteractButtonPressed && context.canceled)
