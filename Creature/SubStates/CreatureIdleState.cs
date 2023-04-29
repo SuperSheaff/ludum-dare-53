@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CreatureIdleState : CreatureParentState
 {
+    private float idleDuration;
+    private float idleTimeElapsed;
 
     public CreatureIdleState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -17,6 +19,9 @@ public class CreatureIdleState : CreatureParentState
     public override void Enter()
     {
         base.Enter();
+
+        idleDuration = Random.Range(1f, 3f);
+        idleTimeElapsed = 0f;
     }
 
     public override void Exit()
@@ -27,10 +32,17 @@ public class CreatureIdleState : CreatureParentState
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        
-        if (!isExitingState) 
-        {
 
+        core.Movement.SetVelocityZero();
+        
+        idleTimeElapsed += Time.deltaTime;
+
+        if (idleTimeElapsed >= idleDuration)
+        {
+            if (!isExitingState) 
+            {
+                stateMachine.ChangeState(creature.MoveState);
+            }
         }
     }
 

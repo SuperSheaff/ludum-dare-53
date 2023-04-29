@@ -36,22 +36,9 @@ public class Creature : MonoBehaviour
 
     #endregion
 
-    #region Check Transforms
+    #region Movement Related Variables
 
-        [SerializeField]
-        public Transform StartingSpawn;
-
-        [SerializeField]
-        public Transform RespawnPoint;
-
-    #endregion
-
-    #region Melon Related Variables
-
-        private Melon touchedMelon;
-        private Melon carriedMelon;
-        private bool isTouchingMelon;
-        private bool isCarryingMelon;
+        private Vector2 randomMoveLocation;
 
     #endregion
 
@@ -71,8 +58,8 @@ public class Creature : MonoBehaviour
 
             StateMachine        = new CreatureStateMachine();
 
-            IdleState           = new CreatureIdleState(this, StateMachine, creatureData, "idle");
-            MoveState           = new CreatureMoveState(this, StateMachine, creatureData, "move");
+            IdleState           = new CreatureIdleState(this, StateMachine, creatureData, "creature: idle");
+            MoveState           = new CreatureMoveState(this, StateMachine, creatureData, "creature: move");
         }
 
         private void Start() {
@@ -84,7 +71,6 @@ public class Creature : MonoBehaviour
             StateMachine.Initialize(IdleState);
 
             referenceVelocity       = Vector2.zero;
-            RespawnPoint.position   = StartingSpawn.position;
             Core.Movement.SetVelocityZero();
         }
 
@@ -100,60 +86,28 @@ public class Creature : MonoBehaviour
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Melon"))
-            {
-                isTouchingMelon = true;
-                touchedMelon    = collision.gameObject.GetComponent<Melon>();
-                Debug.Log("touching melon");
-            }
+          
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (collision.CompareTag("Melon"))
-            {
-                isTouchingMelon = false;
-                touchedMelon    = null;
-            }
+           
         }
 
     #endregion
 
     #region Set Functions
 
-        public void SetCarriedMelon(Melon melon)
+        public void SetRandomMoveLocation() 
         {
-            carriedMelon = melon;
-        }
-
-        public void SetIsCarryingMelon(bool value)
-        {
-            isCarryingMelon = value;
+            float xPos = Random.Range(transform.position.x - GetMoveRange(), transform.position.x + GetMoveRange());
+            float yPos = Random.Range(transform.position.y - GetMoveRange(), transform.position.y + GetMoveRange());
+            randomMoveLocation = new Vector2(xPos, yPos);
         }
 
     #endregion
 
     #region Get Functions
-
-        public bool GetIsTouchingMelon() 
-        {
-            return isTouchingMelon;
-        }
-
-        public Melon GetTouchedMelon() 
-        {
-            return touchedMelon;
-        }
-
-        public bool GetIsCarryingMelon() 
-        {
-            return isCarryingMelon;
-        }
-
-        public Melon GetCarriedMelon() 
-        {
-            return carriedMelon;
-        }
 
         public float GetTotalMoveSpeed()
         {
@@ -165,14 +119,14 @@ public class Creature : MonoBehaviour
             return creatureData.baseMoveSmoothing;
         }
 
-        public float GetInteractCooldownTime() 
+        public float GetMoveRange()
         {
-            return creatureData.InteractCooldownTime;
+            return creatureData.baseMoveRange;
         }
 
-        public float GetInteractCooldownStartTime() 
+        public Vector2 GetRandomMoveLocation()
         {
-            return interactCooldownStartTime;
+            return randomMoveLocation;
         }
 
     #endregion

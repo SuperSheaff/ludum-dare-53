@@ -5,6 +5,7 @@ using UnityEngine;
 public class CreatureMoveState : CreatureParentState
 {
     private Vector3 referenceVelocity;
+    private float distanceToDestination;
 
     public CreatureMoveState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -18,7 +19,8 @@ public class CreatureMoveState : CreatureParentState
     public override void Enter()
     {
         base.Enter();
-        referenceVelocity = Vector3.zero;
+
+        creature.SetRandomMoveLocation();
     }
 
     public override void Exit()
@@ -29,6 +31,17 @@ public class CreatureMoveState : CreatureParentState
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+
+        distanceToDestination = Vector2.Distance(creature.transform.position, creature.GetRandomMoveLocation());
+
+        if (distanceToDestination <= creatureData.destinationThreshold)
+        {
+            // Transition back to idle state
+            stateMachine.ChangeState(creature.IdleState);
+        }
+
+        Vector2 direction = creature.GetRandomMoveLocation() - (Vector2)creature.transform.position;
+        creature.creatureRigidBody.velocity = direction.normalized * creature.GetTotalMoveSpeed();
     }
 
     public override void PhysicsUpdate()
