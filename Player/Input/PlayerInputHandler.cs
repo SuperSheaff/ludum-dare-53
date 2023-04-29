@@ -12,6 +12,8 @@ public class PlayerInputHandler : MonoBehaviour
     public int NormInputX               { get; private set; }
     public int NormInputY               { get; private set; }
 
+    public bool InteractButtonPressed   { get; private set; }
+
     [SerializeField]
 
     private void Start() {
@@ -20,17 +22,26 @@ public class PlayerInputHandler : MonoBehaviour
     private void Update() {
     }
 
-    public void OnMoveInput(InputAction.CallbackContext context) {
+    public void OnMoveInput(InputAction.CallbackContext context) 
+    {
         RawMovementInput = context.ReadValue<Vector2>();
 
         NormInputX = Mathf.RoundToInt(RawMovementInput.x);
         NormInputY = Mathf.RoundToInt(RawMovementInput.y);
     }
 
-    public void OnInteractInput(InputAction.CallbackContext context) {
-        RawMovementInput = context.ReadValue<Vector2>();
+    public void OnInteractInput(InputAction.CallbackContext context) 
+    {
 
-        NormInputX = Mathf.RoundToInt(RawMovementInput.x);
-        NormInputY = Mathf.RoundToInt(RawMovementInput.y);
+        if (!InteractButtonPressed && context.started)
+        {
+            InteractButtonPressed = true;
+            // handle initial key press down here
+        }
+        else if (InteractButtonPressed && context.canceled)
+        {
+            InteractButtonPressed = false;
+            // handle key release here, if needed
+        }
     }
 }

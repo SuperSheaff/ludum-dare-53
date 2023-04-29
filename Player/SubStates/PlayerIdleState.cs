@@ -38,13 +38,15 @@ public class PlayerIdleState : PlayerParentState
                 stateMachine.ChangeState(player.MoveState);
             } 
 
-            if (Input.GetKeyDown(KeyCode.Space) && player.GetIsTouchingMelon() && melon == null)
+            if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
             {
-                melon = player.GetTouchingMelon();
+                player.SetTouchingMelon();
+                melon = player.GetCarriedMelon();
+
                 if (melon != null)
                 {
                     melon.DisableMelon();
-                    this.melon = melon;
+                    stateMachine.ChangeState(player.CarryMelonIdleState);
                 }
             }
         }

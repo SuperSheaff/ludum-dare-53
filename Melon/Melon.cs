@@ -26,4 +26,10 @@ public class Melon : MonoBehaviour
         spriteRenderer.enabled  = false;
         boxCollider.enabled     = false;
     }
+
+    public void EnableMelon()
+    {
+        spriteRenderer.enabled = true;
+        boxCollider.enabled = true;
+    }
 }

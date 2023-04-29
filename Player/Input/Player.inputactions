@@ -79,7 +79,7 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Directions [Arrpws]",
+                    "name": "Directions [Arrows]",
                     "id": "51f9f19c-c05d-4bf7-8548-06a8efe0d3cc",
                     "path": "2DVector",
                     "interactions": "",
@@ -150,7 +150,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "",
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false

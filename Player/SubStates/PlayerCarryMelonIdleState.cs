@@ -36,6 +36,18 @@ public class PlayerCarryMelonIdleState : PlayerParentState
                 stateMachine.ChangeState(player.CarryMelonMoveState);
             } 
         }
+
+        // if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
+        // {
+        //     if (melon != null)
+        //     {
+        //         melon.EnableMelon();
+        //         melon.transform.position = transform.position + new Vector3(0, 1, 0);
+        //         this.melon = null;
+        //     }
+
+        //     stateMachine.ChangeState(player.CarryMelonIdleState);
+        // }
     }
 
     public override void PhysicsUpdate()

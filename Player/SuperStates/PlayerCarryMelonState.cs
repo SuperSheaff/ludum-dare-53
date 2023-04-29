@@ -8,6 +8,7 @@ public class PlayerCarryMelonState : PlayerState
     protected Vector2 input;
     protected int xInput;
     protected int yInput;
+    protected bool interactButtonPressed;
 
     public PlayerCarryMelonState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
     {
@@ -32,8 +33,9 @@ public class PlayerCarryMelonState : PlayerState
     {
         base.LogicUpdate();
         
-        xInput          = player.InputHandler.NormInputX;
-        yInput          = player.InputHandler.NormInputY;
+        xInput                  = player.InputHandler.NormInputX;
+        yInput                  = player.InputHandler.NormInputY;
+        interactButtonPressed   = player.InputHandler.InteractButtonPressed;
 
         core.Movement.checkIfShouldFlip(xInput);
 

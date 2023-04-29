@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
 
     #region Melon Related Variables
 
+        private Melon melon;
         private bool isTouchingMelon;
 
     #endregion
@@ -72,8 +73,8 @@ public class Player : MonoBehaviour
 
             IdleState           = new PlayerIdleState(this, StateMachine, playerData, "idle");
             MoveState           = new PlayerMoveState(this, StateMachine, playerData, "move");
-            CarryMelonIdleState = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "move");
-            CarryMelonMoveState = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "move");
+            CarryMelonIdleState = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "carryMelonIdle");
+            CarryMelonMoveState = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "carryMelonMove");
         }
 
         private void Start() {
@@ -141,6 +142,24 @@ public class Player : MonoBehaviour
         //     startedDrowning = value;
         // }
 
+        public void SetTouchingMelon()
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Melon"))
+                {
+                    melon = collider.gameObject.GetComponent<Melon>();
+                }
+            }
+        }
+
+        public void SetMelonRef() 
+        {
+            melon = null;
+        }
+
     #endregion
 
     #region Get Functions
@@ -150,20 +169,14 @@ public class Player : MonoBehaviour
             return isTouchingMelon;
         }
 
-        public Melon GetTouchingMelon()
+
+
+        public Melon GetCarriedMelon() 
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 0.5f);
-
-            foreach (Collider2D collider in colliders)
-            {
-                if (collider.CompareTag("Melon"))
-                {
-                    return collider.gameObject.GetComponent<Melon>();
-                }
-            }
-
-            return null;
+            return melon;
         }
+
+
 
         public float GetTotalMoveSpeed()
         {
