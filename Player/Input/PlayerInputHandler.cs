@@ -13,6 +13,10 @@ public class PlayerInputHandler : MonoBehaviour
     public int NormInputY               { get; private set; }
 
     public bool InteractButtonPressed   { get; private set; }
+    public float InteractCooldown = 0.5f; // The cooldown period for the interact button
+    
+    private float lastInteractTime; // The time when the interact button was last pressed
+
 
     [SerializeField]
 

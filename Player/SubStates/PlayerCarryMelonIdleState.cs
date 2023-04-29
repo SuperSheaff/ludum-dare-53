@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerCarryMelonIdleState : PlayerParentState
 {
+    private Melon melon;
+
     public PlayerCarryMelonIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
     {
     }
@@ -16,6 +18,8 @@ public class PlayerCarryMelonIdleState : PlayerParentState
     public override void Enter()
     {
         base.Enter();
+
+        melon = player.GetCarriedMelon();
     }
 
     public override void Exit()
@@ -37,17 +41,26 @@ public class PlayerCarryMelonIdleState : PlayerParentState
             } 
         }
 
-        // if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
-        // {
-        //     if (melon != null)
-        //     {
-        //         melon.EnableMelon();
-        //         melon.transform.position = transform.position + new Vector3(0, 1, 0);
-        //         this.melon = null;
-        //     }
+        if (interactButtonPressed)
+        {
+            if (melon != null)
+            {
+                melon.DisableMelon();
+                player.SetCarriedMelon(melon);
+                player.SetIsCarryingMelon(true);
+                stateMachine.ChangeState(player.CarryMelonIdleState);
+            }
 
-        //     stateMachine.ChangeState(player.CarryMelonIdleState);
-        // }
+            if (melon != null)
+            {
+                melon.EnableMelon();
+                player.SetCarriedMelon(null);
+                player.SetIsCarryingMelon(false);
+                melon.transform.position = player.transform.position + new Vector3(0, 1, 0);
+                stateMachine.ChangeState(player.IdleState);
+            }
+
+        }
     }
 
     public override void PhysicsUpdate()

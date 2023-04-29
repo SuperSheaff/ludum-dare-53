@@ -51,8 +51,10 @@ public class Player : MonoBehaviour
 
     #region Melon Related Variables
 
-        private Melon melon;
+        private Melon touchedMelon;
+        private Melon carriedMelon;
         private bool isTouchingMelon;
+        private bool isCarryingMelon;
 
     #endregion
 
@@ -106,58 +108,32 @@ public class Player : MonoBehaviour
             if (collision.CompareTag("Melon"))
             {
                 isTouchingMelon = true;
+                touchedMelon    = collision.gameObject.GetComponent<Melon>();
                 Debug.Log("touching melon");
             }
         }
 
-        private void OnCollisionEnter2D(Collision2D collision) 
+        private void OnTriggerExit2D(Collider2D collision)
         {
-            // if (collision.gameObject.tag == "MegaJug")
-            // {
-            //     if (!caughtMegaJug && hasNet)
-            //     {
-            //         catchMegaJug();
-            //     }
-            // }
-
-            // if (collision.gameObject.tag == "Ground")
-            // {
-            //     string soundName = "oof" + Random.Range(1, 3).ToString();
-            //     gameController.AudioManager.PlaySound(soundName);
-            // }
-        }
-
-        private void OnTriggerStay2D(Collider2D collision) {
-        }
-
-        private void OnTriggerExit2D(Collider2D collision) {
+            if (collision.CompareTag("Melon"))
+            {
+                isTouchingMelon = false;
+                touchedMelon    = null;
+            }
         }
 
     #endregion
 
     #region Set Functions
 
-        // public void SetDrownFlag(bool value)
-        // {
-        //     startedDrowning = value;
-        // }
-
-        public void SetTouchingMelon()
+        public void SetCarriedMelon(Melon melon)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 0.5f);
-
-            foreach (Collider2D collider in colliders)
-            {
-                if (collider.CompareTag("Melon"))
-                {
-                    melon = collider.gameObject.GetComponent<Melon>();
-                }
-            }
+            carriedMelon = melon;
         }
 
-        public void SetMelonRef() 
+        public void SetIsCarryingMelon(bool value)
         {
-            melon = null;
+            isCarryingMelon = value;
         }
 
     #endregion
@@ -169,14 +145,20 @@ public class Player : MonoBehaviour
             return isTouchingMelon;
         }
 
+        public Melon GetTouchedMelon() 
+        {
+            return touchedMelon;
+        }
 
+        public bool GetIsCarryingMelon() 
+        {
+            return isCarryingMelon;
+        }
 
         public Melon GetCarriedMelon() 
         {
-            return melon;
+            return carriedMelon;
         }
-
-
 
         public float GetTotalMoveSpeed()
         {

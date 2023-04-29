@@ -18,6 +18,8 @@ public class PlayerIdleState : PlayerParentState
     public override void Enter()
     {
         base.Enter();
+
+        melon = null;
     }
 
     public override void Exit()
@@ -40,12 +42,13 @@ public class PlayerIdleState : PlayerParentState
 
             if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
             {
-                player.SetTouchingMelon();
-                melon = player.GetCarriedMelon();
+                melon = player.GetTouchedMelon();
 
                 if (melon != null)
                 {
                     melon.DisableMelon();
+                    player.SetCarriedMelon(melon);
+                    player.SetIsCarryingMelon(true);
                     stateMachine.ChangeState(player.CarryMelonIdleState);
                 }
             }
