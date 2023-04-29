@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerIdleState : PlayerParentState
+public class PlayerCarryMelonIdleState : PlayerParentState
 {
-    private Melon melon;
-
-    public PlayerIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
+    public PlayerCarryMelonIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
     {
     }
 
@@ -35,18 +33,8 @@ public class PlayerIdleState : PlayerParentState
         {
             if (xInput != 0 || yInput != 0) 
             {
-                stateMachine.ChangeState(player.MoveState);
+                stateMachine.ChangeState(player.CarryMelonMoveState);
             } 
-
-            if (Input.GetKeyDown(KeyCode.Space) && player.GetIsTouchingMelon() && melon == null)
-            {
-                melon = player.GetTouchingMelon();
-                if (melon != null)
-                {
-                    melon.DisableMelon();
-                    this.melon = melon;
-                }
-            }
         }
     }
 

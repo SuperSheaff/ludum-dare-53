@@ -26,4 +26,11 @@ public class PlayerInputHandler : MonoBehaviour
         NormInputX = Mathf.RoundToInt(RawMovementInput.x);
         NormInputY = Mathf.RoundToInt(RawMovementInput.y);
     }
+
+    public void OnInteractInput(InputAction.CallbackContext context) {
+        RawMovementInput = context.ReadValue<Vector2>();
+
+        NormInputX = Mathf.RoundToInt(RawMovementInput.x);
+        NormInputY = Mathf.RoundToInt(RawMovementInput.y);
+    }
 }

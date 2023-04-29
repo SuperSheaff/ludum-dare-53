@@ -8,10 +8,12 @@ public class Player : MonoBehaviour
 
     #region State Variables
 
-        public PlayerStateMachine       StateMachine        { get; private set; }
+        public PlayerStateMachine           StateMachine        { get; private set; }
 
-        public PlayerIdleState          IdleState           { get; private set; }
-        public PlayerMoveState          MoveState           { get; private set; }
+        public PlayerIdleState              IdleState           { get; private set; }
+        public PlayerMoveState              MoveState           { get; private set; }
+        public PlayerCarryMelonIdleState    CarryMelonIdleState { get; private set; }
+        public PlayerCarryMelonMoveState    CarryMelonMoveState { get; private set; }
 
         [SerializeField]
         private PlayerData playerData;
@@ -47,6 +49,12 @@ public class Player : MonoBehaviour
 
     #endregion
 
+    #region Melon Related Variables
+
+        private bool isTouchingMelon;
+
+    #endregion
+
     #region Other Variables
 
         private Vector2 workspace;
@@ -64,7 +72,8 @@ public class Player : MonoBehaviour
 
             IdleState           = new PlayerIdleState(this, StateMachine, playerData, "idle");
             MoveState           = new PlayerMoveState(this, StateMachine, playerData, "move");
-
+            CarryMelonIdleState = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "move");
+            CarryMelonMoveState = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "move");
         }
 
         private void Start() {
@@ -88,6 +97,16 @@ public class Player : MonoBehaviour
 
         private void FixedUpdate() {
             StateMachine.CurrentState.PhysicsUpdate();    
+        }
+
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Melon"))
+            {
+                isTouchingMelon = true;
+                Debug.Log("touching melon");
+            }
         }
 
         private void OnCollisionEnter2D(Collision2D collision) 
@@ -125,6 +144,26 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Get Functions
+
+        public bool GetIsTouchingMelon() 
+        {
+            return isTouchingMelon;
+        }
+
+        public Melon GetTouchingMelon()
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Melon"))
+                {
+                    return collider.gameObject.GetComponent<Melon>();
+                }
+            }
+
+            return null;
+        }
 
         public float GetTotalMoveSpeed()
         {
