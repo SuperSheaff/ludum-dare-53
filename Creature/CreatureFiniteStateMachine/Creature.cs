@@ -56,7 +56,8 @@ public class Creature : MonoBehaviour
     #region Other Variables
 
         public GameObject CreaturePrefab;
-        private float interactCooldownStartTime = 0f;
+        public GameObject CreaturesContainer;
+        private float layingEggCooldownStartTime = -20f;
         private Vector2 workspace;
         private Vector2 referenceVelocity;
 
@@ -86,7 +87,7 @@ public class Creature : MonoBehaviour
             creatureAudioManager  = GetComponent<CreatureAudioManager>();
 
             StateMachine.Initialize(IdleState);
-            SetMood(10f);
+            SetMood(60f);
 
             referenceVelocity       = Vector2.zero;
             Core.Movement.SetVelocityZero();
@@ -96,9 +97,12 @@ public class Creature : MonoBehaviour
             Core.LogicUpdate();
             StateMachine.CurrentState.LogicUpdate();   
 
-            if (Random.value < creatureData.eggLayChance && mood > 50f) // Check if the creature lays an egg
+            if (Time.time >= GetLayingEggCooldownStartTime() + creatureData.layingEggCooldownTime)
             {
-                StateMachine.ChangeState(LayingEggState);
+                if ((Random.value < creatureData.eggLayChance && mood > 50f)) // Check if the creature lays an egg
+                {
+                    StateMachine.ChangeState(LayingEggState);
+                }
             }
 
             Debug.Log("Creature mood:" + mood);
@@ -154,6 +158,11 @@ public class Creature : MonoBehaviour
             return mood;
         }
 
+        public float GetLayingEggCooldownStartTime()
+        {
+            return layingEggCooldownStartTime;
+        }
+
         public float GetTotalMoveSpeed()
         {
             return creatureData.baseMoveSpeed;
@@ -191,14 +200,23 @@ public class Creature : MonoBehaviour
     
     #region Other Functions
 
-        public void StartInteractCooldown()
+        public void StartLayingEggCooldown()
         {
-            interactCooldownStartTime = Time.time;
+            layingEggCooldownStartTime = Time.time;
         }
 
         public void FeedCreature()
         {
             StateMachine.ChangeState(EatState);
+        }
+
+        public void LayEgg()
+        {
+            Debug.Log("Reach 1");
+            GameObject eggObject = Instantiate(CreaturePrefab, transform.position, Quaternion.identity, CreaturesContainer.transform);
+            Debug.Log("Reach 2");
+            Creature eggCreature = eggObject.GetComponent<Creature>();
+            Debug.Log("Reach 3");
         }
 
     #endregion

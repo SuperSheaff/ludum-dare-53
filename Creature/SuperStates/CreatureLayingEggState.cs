@@ -5,7 +5,7 @@ using UnityEngine;
 public class CreatureLayingEggState : CreatureState
 {
 
-    private GameObject eggObject;
+    private GameObject creaturePrefab;
 
     public CreatureLayingEggState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -19,8 +19,6 @@ public class CreatureLayingEggState : CreatureState
     public override void Enter()
     {
         base.Enter();
-
-        eggObject = null;
     }
 
     public override void Exit()
@@ -43,11 +41,9 @@ public class CreatureLayingEggState : CreatureState
     public override void AnimationFinishedTrigger()
     {
         base.AnimationFinishedTrigger();
-
-        eggObject = Instantiate(creature.CreaturePrefab, creature.transform.position, Quaternion.identity);
-        Creature eggCreature = eggObject.GetComponent<Creature>();
-        eggCreature.StateMachine.ChangeState(eggCreature.EggState);
+        
+        creature.StartLayingEggCooldown();
+        creature.LayEgg();
         stateMachine.ChangeState(creature.IdleState);
-
     }
 }

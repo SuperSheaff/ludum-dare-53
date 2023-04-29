@@ -22,8 +22,6 @@ public class CreatureAudioManager : MonoBehaviour
             return;
         }
 
-        DontDestroyOnLoad(gameObject);
-
         foreach (GameSound sound in gameSounds)
         {
             sound.source                = gameObject.AddComponent<AudioSource>();
