@@ -8,10 +8,15 @@ public class Creature : MonoBehaviour
 
     #region State Variables
 
-        public CreatureStateMachine           StateMachine        { get; private set; }
+        public CreatureStateMachine         StateMachine        { get; private set; }
 
-        public CreatureIdleState              IdleState           { get; private set; }
-        public CreatureMoveState              MoveState           { get; private set; }
+        public CreatureIdleState            IdleState           { get; private set; }
+        public CreatureMoveState            MoveState           { get; private set; }
+        public CreaturePreScremState        PreScremState       { get; private set; }
+        public CreatureScremState           ScremState          { get; private set; }
+        public CreatureEatState             EatState            { get; private set; }
+        public CreatureEggState             EggState            { get; private set; }
+        public CreatureLayingEggState       LayingEggState      { get; private set; }
 
         [SerializeField]
         private CreatureData creatureData;
@@ -42,8 +47,15 @@ public class Creature : MonoBehaviour
 
     #endregion
 
+    #region Mood Related Variables
+
+        private float mood;
+
+    #endregion
+
     #region Other Variables
 
+        public GameObject CreaturePrefab;
         private float interactCooldownStartTime = 0f;
         private Vector2 workspace;
         private Vector2 referenceVelocity;
@@ -60,6 +72,11 @@ public class Creature : MonoBehaviour
 
             IdleState           = new CreatureIdleState(this, StateMachine, creatureData, "creature: idle");
             MoveState           = new CreatureMoveState(this, StateMachine, creatureData, "creature: move");
+            PreScremState       = new CreaturePreScremState(this, StateMachine, creatureData, "creature: pre-screm");
+            ScremState          = new CreatureScremState(this, StateMachine, creatureData, "creature: screm");
+            EatState            = new CreatureEatState(this, StateMachine, creatureData, "creature: eat");
+            EggState            = new CreatureEggState(this, StateMachine, creatureData, "creature: egg");
+            LayingEggState      = new CreatureLayingEggState(this, StateMachine, creatureData, "creature: laying-egg");
         }
 
         private void Start() {
@@ -69,6 +86,7 @@ public class Creature : MonoBehaviour
             creatureAudioManager  = GetComponent<CreatureAudioManager>();
 
             StateMachine.Initialize(IdleState);
+            SetMood(10f);
 
             referenceVelocity       = Vector2.zero;
             Core.Movement.SetVelocityZero();
@@ -77,6 +95,23 @@ public class Creature : MonoBehaviour
         private void Update() {
             Core.LogicUpdate();
             StateMachine.CurrentState.LogicUpdate();   
+
+            if (Random.value < creatureData.eggLayChance && mood > 50f) // Check if the creature lays an egg
+            {
+                StateMachine.ChangeState(LayingEggState);
+            }
+
+            Debug.Log("Creature mood:" + mood);
+            if (mood == 0 && StateMachine.CurrentState != PreScremState && StateMachine.CurrentState != ScremState) 
+            {
+                StateMachine.ChangeState(PreScremState);
+            }
+
+            // Decrease the mood by moodDrainRate per second
+            mood -= creatureData.moodDrainRate * Time.deltaTime;
+
+            // Ensure mood doesn't go negative
+            mood = Mathf.Max(0f, mood);
         }
 
         private void FixedUpdate() {
@@ -105,9 +140,19 @@ public class Creature : MonoBehaviour
             randomMoveLocation = new Vector2(xPos, yPos);
         }
 
+        public void SetMood(float value) 
+        {
+            mood = value;
+        }
+
     #endregion
 
     #region Get Functions
+
+        public float GetMood()
+        {
+            return mood;
+        }
 
         public float GetTotalMoveSpeed()
         {
@@ -146,14 +191,14 @@ public class Creature : MonoBehaviour
     
     #region Other Functions
 
-        // public void ResetGame() {
-        //     Core.Movement.checkIfShouldFlip(1);
-        //     SetSpawnPoint(StartingSpawn.position);
-        // }
-
         public void StartInteractCooldown()
         {
             interactCooldownStartTime = Time.time;
+        }
+
+        public void FeedCreature()
+        {
+            StateMachine.ChangeState(EatState);
         }
 
     #endregion

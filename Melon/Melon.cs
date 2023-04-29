@@ -32,4 +32,9 @@ public class Melon : MonoBehaviour
         spriteRenderer.enabled = true;
         boxCollider.enabled = true;
     }
+
+     public void DestroyMelon()
+    {
+        Destroy(this.gameObject);
+    }
 }

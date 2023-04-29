@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerCarryMelonIdleState : PlayerParentState
 {
     private Melon melon;
+    private Creature creature;
 
     public PlayerCarryMelonIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
     {
@@ -19,7 +20,8 @@ public class PlayerCarryMelonIdleState : PlayerParentState
     {
         base.Enter();
 
-        melon = player.GetCarriedMelon();
+        melon       = player.GetCarriedMelon();
+        creature    = null;
     }
 
     public override void Exit()
@@ -43,9 +45,24 @@ public class PlayerCarryMelonIdleState : PlayerParentState
 
         if (Time.time >= player.GetInteractCooldownStartTime() + player.GetInteractCooldownTime())
         {
-            if (interactButtonPressed)
+            if (interactButtonPressed && melon != null)
             {
-                if (melon != null)
+
+                if (player.GetIsTouchingCreature())
+                {
+                    creature = player.GetTouchedCreature();
+
+                    if (creature != null)
+                    {
+                        creature.FeedCreature();
+                        melon.DestroyMelon();
+                        player.SetCarriedMelon(null);
+                        player.SetIsCarryingMelon(false);
+                        player.StartInteractCooldown();
+                        stateMachine.ChangeState(player.IdleState);
+                    }
+                }
+                else
                 {
                     melon.EnableMelon();
                     player.SetCarriedMelon(null);

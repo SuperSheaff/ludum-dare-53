@@ -58,6 +58,15 @@ public class Player : MonoBehaviour
 
     #endregion
 
+        #region Creature Related Variables
+
+        private Creature touchedCreature;
+        private Creature carriedCreature;
+        private bool isTouchingCreature;
+        private bool isCarryingCreature;
+
+    #endregion
+
     #region Other Variables
 
         private float interactCooldownStartTime = 0f;
@@ -126,6 +135,13 @@ public class Player : MonoBehaviour
                 touchedMelon    = collision.gameObject.GetComponent<Melon>();
                 Debug.Log("touching melon");
             }
+
+            if (collision.CompareTag("Creature"))
+            {
+                isTouchingCreature = true;
+                touchedCreature    = collision.gameObject.GetComponent<Creature>();
+                Debug.Log("touching creature");
+            }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
@@ -134,6 +150,12 @@ public class Player : MonoBehaviour
             {
                 isTouchingMelon = false;
                 touchedMelon    = null;
+            }
+
+             if (collision.CompareTag("Creature"))
+            {
+                isTouchingCreature = false;
+                touchedCreature    = null;
             }
         }
 
@@ -173,6 +195,16 @@ public class Player : MonoBehaviour
         public Melon GetCarriedMelon() 
         {
             return carriedMelon;
+        }
+
+        public bool GetIsTouchingCreature() 
+        {
+            return isTouchingCreature;
+        }
+
+        public Creature GetTouchedCreature() 
+        {
+            return touchedCreature;
         }
 
         public float GetTotalMoveSpeed()

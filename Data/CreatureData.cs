@@ -12,5 +12,13 @@ public class CreatureData : ScriptableObject
     public float InteractCooldownTime = 0.33f;
     public float baseMoveRange = 3f;
     public float destinationThreshold = 0.1f;
+
+    [Header("Mood Stats")]
+    public float moodDrainRate  = 1f;
+    public float MelonMoodBoost = 50f;
     
+    [Header("Egg Stats")]
+    public float eggDuration    = 10f;
+    public float eggLayChance   = 0.01f;
+
 }

@@ -26,6 +26,8 @@ public class CreatureMoveState : CreatureParentState
     public override void Exit()
     {
         base.Exit();
+
+        core.Movement.SetVelocityZero();
     }
 
     public override void LogicUpdate()
@@ -37,11 +39,13 @@ public class CreatureMoveState : CreatureParentState
         if (distanceToDestination <= creatureData.destinationThreshold)
         {
             // Transition back to idle state
-            stateMachine.ChangeState(creature.IdleState);
+            if (!isExitingState) 
+            {
+                stateMachine.ChangeState(creature.IdleState);
+            }
         }
 
-        Vector2 direction = creature.GetRandomMoveLocation() - (Vector2)creature.transform.position;
-        creature.creatureRigidBody.velocity = direction.normalized * creature.GetTotalMoveSpeed();
+        creature.transform.position = Vector3.MoveTowards(creature.transform.position, creature.GetRandomMoveLocation(), creature.GetTotalMoveSpeed() * Time.deltaTime);
     }
 
     public override void PhysicsUpdate()

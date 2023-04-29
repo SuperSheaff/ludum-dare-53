@@ -15,3 +15,5 @@ MonoBehaviour:
   baseMoveSpeed: 50
   baseMoveSmoothing: 0
   InteractCooldownTime: 0.33
+  baseMoveRange: 100
+  destinationThreshold: 0.1
