@@ -17,10 +17,12 @@ public class CreatureData : ScriptableObject
     public float moodDrainRate          = 1f;
     public float MelonMoodBoost         = 50f;
     public float scremDuration          = 10f;
-    
+    public float mlemDuration           = 5f;
+
     [Header("Egg Stats")]
     public float eggDuration            = 10f;
     public float eggLayChance           = 0.01f;
+    public float eggLayChanceInterval   = 5f;
     public float layingEggCooldownTime  = 20f;
 
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class CreatureParentState : CreatureState
 {
     private float localMood;
+    private float eggLayChanceIntervalStartTime;
 
     public CreatureParentState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -33,16 +34,24 @@ public class CreatureParentState : CreatureState
 
         if (Time.time >= creature.GetLayingEggCooldownStartTime() + creatureData.layingEggCooldownTime)
         {
-            if ((Random.value < creatureData.eggLayChance && localMood > 50f)) // Check if the creature lays an egg
+            if (Time.time >= eggLayChanceIntervalStartTime + creatureData.eggLayChanceInterval)
             {
-                stateMachine.ChangeState(creature.LayingEggState);
+                TryLayEgg();
             }
         }
 
-        if (localMood == 0) 
+        if (!isExitingState) 
         {
-            stateMachine.ChangeState(creature.PreScremState);
+            if (localMood == 0) 
+            {
+                stateMachine.ChangeState(creature.PreScremState);
+            }
+            else if (localMood >= 100) 
+            {
+                stateMachine.ChangeState(creature.MlemState);
+            }
         }
+
 
         // Decrease the mood by moodDrainRate per second
         localMood -= creatureData.moodDrainRate * Time.deltaTime;
@@ -56,5 +65,20 @@ public class CreatureParentState : CreatureState
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+    }
+
+    public void TryLayEgg()
+    {
+        if ((Random.value < creatureData.eggLayChance && localMood > 50f)) // Check if the creature lays an egg
+        {
+            stateMachine.ChangeState(creature.LayingEggState);
+        }
+
+        StartEggLayChanceInterval();
+    }
+
+    public void StartEggLayChanceInterval()
+    {
+        eggLayChanceIntervalStartTime = Time.time;
     }
 }

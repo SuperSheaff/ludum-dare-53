@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerIdleState : PlayerParentState
 {
     private Melon melon;
+    private Creature creature;
 
     public PlayerIdleState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animatorBoolName) : base(player, stateMachine, playerData, animatorBoolName)
     {
@@ -19,7 +20,8 @@ public class PlayerIdleState : PlayerParentState
     {
         base.Enter();
 
-        melon = null;
+        melon       = null;
+        creature     = null;
     }
 
     public override void Exit()
@@ -42,17 +44,39 @@ public class PlayerIdleState : PlayerParentState
 
             if (Time.time >= player.GetInteractCooldownStartTime() + player.GetInteractCooldownTime())
             {
-                if (interactButtonPressed && player.GetIsTouchingMelon() && melon == null)
+                if (interactButtonPressed)
                 {
-                    melon = player.GetTouchedMelon();
-
-                    if (melon != null)
+                    if (player.GetIsTouchingCreature() && creature == null)
                     {
-                        melon.DisableMelon();
-                        player.SetCarriedMelon(melon);
-                        player.SetIsCarryingMelon(true);
-                        player.StartInteractCooldown();
-                        stateMachine.ChangeState(player.CarryMelonIdleState);
+                        creature = player.GetTouchedCreature();
+
+                        if (creature != null && creature.GetCanPickupCreature())
+                        {
+                            creature.PickupCreature();
+                            player.SetCarriedCreature(creature);
+                            player.SetIsCarryingCreature(true);
+                            player.StartInteractCooldown();
+                            stateMachine.ChangeState(player.CarryCreatureIdleState);
+                        }
+                    }
+                }
+            }
+            if (Time.time >= player.GetInteractCooldownStartTime() + player.GetInteractCooldownTime())
+            {
+                if (interactButtonPressed)
+                {
+                    if (player.GetIsTouchingMelon() && melon == null)
+                    {
+                        melon = player.GetTouchedMelon();
+
+                        if (melon != null)
+                        {
+                            melon.DisableMelon();
+                            player.SetCarriedMelon(melon);
+                            player.SetIsCarryingMelon(true);
+                            player.StartInteractCooldown();
+                            stateMachine.ChangeState(player.CarryMelonIdleState);
+                        }
                     }
                 }
             }
@@ -63,5 +87,4 @@ public class PlayerIdleState : PlayerParentState
     {
         base.PhysicsUpdate();
     }
-
 }

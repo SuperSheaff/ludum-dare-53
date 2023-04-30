@@ -17,12 +17,11 @@ public class Creature : MonoBehaviour
         public CreatureEggState             EggState            { get; private set; }
         public CreatureLayingEggState       LayingEggState      { get; private set; }
         public CreatureDeathState           DeathState          { get; private set; }
+        public CreatureMlemState            MlemState           { get; private set; }
+        public CreatureCarriedState         CarriedState        { get; private set; }
 
         [SerializeField]
         private CreatureData creatureData;
-
-        // [SerializeField]
-        // public GameController gameController;
 
         // [SerializeField]
         // public CameraController CameraController;
@@ -38,6 +37,8 @@ public class Creature : MonoBehaviour
         public Rigidbody2D              creatureRigidBody       { get; private set; }
         public BoxCollider2D            creatureBoxCollider     { get; private set; }
         public CreatureAudioManager     creatureAudioManager    { get; private set; }
+        public SpriteRenderer           spriteRenderer          { get; private set; }
+        public GameController           gameController          { get; private set; }
 
     #endregion
 
@@ -57,10 +58,12 @@ public class Creature : MonoBehaviour
 
         public GameObject CreaturePrefab;
         public GameObject CreaturesContainer;
+        public GameObject eggObject;
+
         private float layingEggCooldownStartTime = -20f;
+        private bool canPickupCreature;
         private Vector2 workspace;
         private Vector2 referenceVelocity;
-        public GameObject eggObject;
 
     #endregion
 
@@ -80,19 +83,24 @@ public class Creature : MonoBehaviour
             EggState            = new CreatureEggState(this, StateMachine, creatureData, "creature: egg");
             LayingEggState      = new CreatureLayingEggState(this, StateMachine, creatureData, "creature: laying-egg");
             DeathState          = new CreatureDeathState(this, StateMachine, creatureData, "creature: death");
+            MlemState           = new CreatureMlemState(this, StateMachine, creatureData, "creature: mlem");
+            CarriedState        = new CreatureCarriedState(this, StateMachine, creatureData, "creature: mlem");
         }
 
         private void Start() {
-            creatureAnimator      = GetComponent<Animator>();
-            creatureRigidBody     = GetComponent<Rigidbody2D>();
-            creatureBoxCollider   = GetComponent<BoxCollider2D>();
-            creatureAudioManager  = GetComponent<CreatureAudioManager>();
+            creatureAnimator        = GetComponent<Animator>();
+            creatureRigidBody       = GetComponent<Rigidbody2D>();
+            creatureBoxCollider     = GetComponent<BoxCollider2D>();
+            creatureAudioManager    = GetComponent<CreatureAudioManager>();
+            spriteRenderer          = GetComponent<SpriteRenderer>();
+            gameController          = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 
             StateMachine.Initialize(EggState);
             SetMood(60f);
 
             referenceVelocity       = Vector2.zero;
             Core.Movement.SetVelocityZero();
+            canPickupCreature       = false;
         }
 
         private void Update() {
@@ -131,6 +139,11 @@ public class Creature : MonoBehaviour
             mood = value;
         }
 
+        public void SetCanPickupCreature(bool value) 
+        {
+            canPickupCreature = value;
+        }
+
     #endregion
 
     #region Get Functions
@@ -165,6 +178,11 @@ public class Creature : MonoBehaviour
             return randomMoveLocation;
         }
 
+        public bool GetCanPickupCreature() 
+        {
+            return canPickupCreature;
+        }
+
     #endregion
 
     #region Trigger Functions
@@ -194,6 +212,22 @@ public class Creature : MonoBehaviour
         public void LayEgg()
         {
             eggObject = Instantiate(CreaturePrefab, transform.position, transform.rotation);
+        }
+
+        public void PickupCreature()
+        {
+            spriteRenderer.enabled  = false;
+            creatureBoxCollider.enabled     = false;
+
+            StateMachine.ChangeState(CarriedState);
+        }
+
+        public void DropCreature()
+        {
+            spriteRenderer.enabled = true;
+            creatureBoxCollider.enabled = true;
+
+            StateMachine.ChangeState(IdleState);
         }
 
         public void DestroySelf()

@@ -8,12 +8,14 @@ public class Player : MonoBehaviour
 
     #region State Variables
 
-        public PlayerStateMachine           StateMachine        { get; private set; }
+        public PlayerStateMachine               StateMachine            { get; private set; }
 
-        public PlayerIdleState              IdleState           { get; private set; }
-        public PlayerMoveState              MoveState           { get; private set; }
-        public PlayerCarryMelonIdleState    CarryMelonIdleState { get; private set; }
-        public PlayerCarryMelonMoveState    CarryMelonMoveState { get; private set; }
+        public PlayerIdleState                  IdleState               { get; private set; }
+        public PlayerMoveState                  MoveState               { get; private set; }
+        public PlayerCarryMelonIdleState        CarryMelonIdleState     { get; private set; }
+        public PlayerCarryMelonMoveState        CarryMelonMoveState     { get; private set; }
+        public PlayerCarryCreatureIdleState     CarryCreatureIdleState  { get; private set; }
+        public PlayerCarryCreatureMoveState     CarryCreatureMoveState  { get; private set; }
 
         [SerializeField]
         private PlayerData playerData;
@@ -58,12 +60,18 @@ public class Player : MonoBehaviour
 
     #endregion
 
-        #region Creature Related Variables
+    #region Creature Related Variables
 
         private Creature touchedCreature;
         private Creature carriedCreature;
         private bool isTouchingCreature;
         private bool isCarryingCreature;
+
+    #endregion
+
+    #region Delivery Related Variables
+
+        private bool isTouchingDelivery;
 
     #endregion
 
@@ -82,12 +90,14 @@ public class Player : MonoBehaviour
 
             Core = GetComponentInChildren<Core>();
 
-            StateMachine        = new PlayerStateMachine();
+            StateMachine            = new PlayerStateMachine();
 
-            IdleState           = new PlayerIdleState(this, StateMachine, playerData, "idle");
-            MoveState           = new PlayerMoveState(this, StateMachine, playerData, "move");
-            CarryMelonIdleState = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "carryMelonIdle");
-            CarryMelonMoveState = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "carryMelonMove");
+            IdleState               = new PlayerIdleState(this, StateMachine, playerData, "idle");
+            MoveState               = new PlayerMoveState(this, StateMachine, playerData, "move");
+            CarryMelonIdleState     = new PlayerCarryMelonIdleState(this, StateMachine, playerData, "carryMelonIdle");
+            CarryMelonMoveState     = new PlayerCarryMelonMoveState(this, StateMachine, playerData, "carryMelonMove");
+            CarryCreatureIdleState  = new PlayerCarryCreatureIdleState(this, StateMachine, playerData, "carryCreatureIdle");
+            CarryCreatureMoveState  = new PlayerCarryCreatureMoveState(this, StateMachine, playerData, "carryCreatureMove");
         }
 
         private void Start() {
@@ -142,6 +152,12 @@ public class Player : MonoBehaviour
                 touchedCreature    = collision.gameObject.GetComponent<Creature>();
                 Debug.Log("touching creature");
             }
+
+            if (collision.CompareTag("Delivery"))
+            {
+                isTouchingDelivery = true;
+                Debug.Log("touching Delivery");
+            }
         }
 
         private void OnTriggerExit2D(Collider2D collision)
@@ -157,6 +173,11 @@ public class Player : MonoBehaviour
                 isTouchingCreature = false;
                 touchedCreature    = null;
             }
+
+            if (collision.CompareTag("Delivery"))
+            {
+                isTouchingDelivery = false;
+            }
         }
 
     #endregion
@@ -171,6 +192,16 @@ public class Player : MonoBehaviour
         public void SetIsCarryingMelon(bool value)
         {
             isCarryingMelon = value;
+        }
+
+        public void SetCarriedCreature(Creature creature)
+        {
+            carriedCreature = creature;
+        }
+
+        public void SetIsCarryingCreature(bool value)
+        {
+            isCarryingCreature = value;
         }
 
     #endregion
@@ -197,14 +228,29 @@ public class Player : MonoBehaviour
             return carriedMelon;
         }
 
+        public bool GetIsCarryingCreature() 
+        {
+            return isCarryingCreature;
+        }
+
+        public Creature GetCarriedCreature() 
+        {
+            return carriedCreature;
+        }
+
         public bool GetIsTouchingCreature() 
         {
             return isTouchingCreature;
-        }
+        }           
 
         public Creature GetTouchedCreature() 
         {
             return touchedCreature;
+        }
+
+        public bool GetIsTouchingDelivery() 
+        {
+            return isTouchingDelivery;
         }
 
         public float GetTotalMoveSpeed()

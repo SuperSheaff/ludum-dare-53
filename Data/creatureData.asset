@@ -19,6 +19,8 @@ MonoBehaviour:
   destinationThreshold: 0.1
   moodDrainRate: 1
   MelonMoodBoost: 50
+  scremDuration: 10
   eggDuration: 5
-  eggLayChance: 0.01
+  eggLayChance: 0.1
+  eggLayChanceInterval: 5
   layingEggCooldownTime: 20
