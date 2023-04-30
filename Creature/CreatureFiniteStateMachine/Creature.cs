@@ -36,7 +36,7 @@ public class Creature : MonoBehaviour
         public Core                     Core                    { get; private set; }
         public Animator                 creatureAnimator        { get; private set; }
         public Rigidbody2D              creatureRigidBody       { get; private set; }
-        public BoxCollider2D            creatureBoxCollider     { get; private set; }
+        // public BoxCollider2D            creatureBoxCollider     { get; private set; }
         public CreatureAudioManager     creatureAudioManager    { get; private set; }
 
     #endregion
@@ -83,7 +83,7 @@ public class Creature : MonoBehaviour
         private void Start() {
             creatureAnimator      = GetComponent<Animator>();
             creatureRigidBody     = GetComponent<Rigidbody2D>();
-            creatureBoxCollider   = GetComponent<BoxCollider2D>();
+            // creatureBoxCollider   = GetComponent<BoxCollider2D>();
             creatureAudioManager  = GetComponent<CreatureAudioManager>();
 
             StateMachine.Initialize(IdleState);
@@ -197,7 +197,6 @@ public class Creature : MonoBehaviour
 
     #endregion
     
-    
     #region Other Functions
 
         public void StartLayingEggCooldown()
@@ -212,7 +211,7 @@ public class Creature : MonoBehaviour
 
         public void LayEgg()
         {
-            Instantiate(CreaturePrefab, transform.position, transform.rotation, CreaturesContainer.transform);
+            GameObject creature = Instantiate(CreaturePrefab, transform.position, transform.rotation, CreaturesContainer.transform);
         }
 
     #endregion

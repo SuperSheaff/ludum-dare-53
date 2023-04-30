@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 {
 
     public Camera MainCamera;
+    public GameObject CreaturePrefab;
 
     public GeneralAudioManager AudioManager;
     private Player player;
@@ -18,6 +19,8 @@ public class GameController : MonoBehaviour
     {
         AudioManager    = GetComponent<GeneralAudioManager>();
         player          = GameObject.FindWithTag("Player").GetComponent<Player>();
+
+        Instantiate(CreaturePrefab, transform.position, transform.rotation, transform);
     }
     
     // Update is called once per frame

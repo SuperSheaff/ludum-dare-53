@@ -42,8 +42,8 @@ public class CreatureLayingEggState : CreatureState
     {
         base.AnimationFinishedTrigger();
         
-        creature.StartLayingEggCooldown();
         creature.LayEgg();
+        creature.StartLayingEggCooldown();
         stateMachine.ChangeState(creature.IdleState);
     }
 }
