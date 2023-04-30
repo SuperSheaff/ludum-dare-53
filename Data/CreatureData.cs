@@ -7,15 +7,16 @@ using UnityEngine;
 public class CreatureData : ScriptableObject
 {
     [Header("Creature Stats")]
-    public float baseMoveSpeed = 50f;
-    public float baseMoveSmoothing = 0f;
-    public float InteractCooldownTime = 0.33f;
-    public float baseMoveRange = 3f;
-    public float destinationThreshold = 0.1f;
+    public float baseMoveSpeed          = 50f;
+    public float baseMoveSmoothing      = 0f;
+    public float InteractCooldownTime   = 0.33f;
+    public float baseMoveRange          = 3f;
+    public float destinationThreshold   = 0.1f;
 
     [Header("Mood Stats")]
-    public float moodDrainRate  = 1f;
-    public float MelonMoodBoost = 50f;
+    public float moodDrainRate          = 1f;
+    public float MelonMoodBoost         = 50f;
+    public float scremDuration          = 10f;
     
     [Header("Egg Stats")]
     public float eggDuration            = 10f;

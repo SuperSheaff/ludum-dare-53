@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Creature : MonoBehaviour
 {
@@ -17,15 +16,16 @@ public class Creature : MonoBehaviour
         public CreatureEatState             EatState            { get; private set; }
         public CreatureEggState             EggState            { get; private set; }
         public CreatureLayingEggState       LayingEggState      { get; private set; }
+        public CreatureDeathState           DeathState          { get; private set; }
 
         [SerializeField]
         private CreatureData creatureData;
 
-        [SerializeField]
-        public GameController gameController;
+        // [SerializeField]
+        // public GameController gameController;
 
-        [SerializeField]
-        public CameraController CameraController;
+        // [SerializeField]
+        // public CameraController CameraController;
 
     #endregion
 
@@ -36,7 +36,7 @@ public class Creature : MonoBehaviour
         public Core                     Core                    { get; private set; }
         public Animator                 creatureAnimator        { get; private set; }
         public Rigidbody2D              creatureRigidBody       { get; private set; }
-        // public BoxCollider2D            creatureBoxCollider     { get; private set; }
+        public BoxCollider2D            creatureBoxCollider     { get; private set; }
         public CreatureAudioManager     creatureAudioManager    { get; private set; }
 
     #endregion
@@ -60,6 +60,7 @@ public class Creature : MonoBehaviour
         private float layingEggCooldownStartTime = -20f;
         private Vector2 workspace;
         private Vector2 referenceVelocity;
+        public GameObject eggObject;
 
     #endregion
 
@@ -78,15 +79,16 @@ public class Creature : MonoBehaviour
             EatState            = new CreatureEatState(this, StateMachine, creatureData, "creature: eat");
             EggState            = new CreatureEggState(this, StateMachine, creatureData, "creature: egg");
             LayingEggState      = new CreatureLayingEggState(this, StateMachine, creatureData, "creature: laying-egg");
+            DeathState          = new CreatureDeathState(this, StateMachine, creatureData, "creature: death");
         }
 
         private void Start() {
             creatureAnimator      = GetComponent<Animator>();
             creatureRigidBody     = GetComponent<Rigidbody2D>();
-            // creatureBoxCollider   = GetComponent<BoxCollider2D>();
+            creatureBoxCollider   = GetComponent<BoxCollider2D>();
             creatureAudioManager  = GetComponent<CreatureAudioManager>();
 
-            StateMachine.Initialize(IdleState);
+            StateMachine.Initialize(EggState);
             SetMood(60f);
 
             referenceVelocity       = Vector2.zero;
@@ -96,26 +98,6 @@ public class Creature : MonoBehaviour
         private void Update() {
             Core.LogicUpdate();
             StateMachine.CurrentState.LogicUpdate();   
-
-            if (Time.time >= GetLayingEggCooldownStartTime() + creatureData.layingEggCooldownTime)
-            {
-                if ((Random.value < creatureData.eggLayChance && mood > 50f)) // Check if the creature lays an egg
-                {
-                    StateMachine.ChangeState(LayingEggState);
-                }
-            }
-
-            Debug.Log("Creature mood:" + mood);
-            if (mood == 0 && StateMachine.CurrentState != PreScremState && StateMachine.CurrentState != ScremState) 
-            {
-                StateMachine.ChangeState(PreScremState);
-            }
-
-            // Decrease the mood by moodDrainRate per second
-            mood -= creatureData.moodDrainRate * Time.deltaTime;
-
-            // Ensure mood doesn't go negative
-            mood = Mathf.Max(0f, mood);
         }
 
         private void FixedUpdate() {
@@ -211,7 +193,12 @@ public class Creature : MonoBehaviour
 
         public void LayEgg()
         {
-            GameObject creature = Instantiate(CreaturePrefab, transform.position, transform.rotation, CreaturesContainer.transform);
+            eggObject = Instantiate(CreaturePrefab, transform.position, transform.rotation);
+        }
+
+        public void DestroySelf()
+        {
+            Destroy(this.gameObject);
         }
 
     #endregion

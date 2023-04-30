@@ -5,6 +5,8 @@ using UnityEngine;
 public class CreatureScremState : CreatureState
 {
 
+    private float scremTimeElapsed;
+
     public CreatureScremState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
     }
@@ -17,6 +19,8 @@ public class CreatureScremState : CreatureState
     public override void Enter()
     {
         base.Enter();
+
+        scremTimeElapsed = 0f;
     }
 
     public override void Exit()
@@ -29,6 +33,16 @@ public class CreatureScremState : CreatureState
         base.LogicUpdate();
 
         core.Movement.SetVelocityZero();
+
+        scremTimeElapsed += Time.deltaTime;
+
+        if (scremTimeElapsed >= creatureData.scremDuration)
+        {
+            if (!isExitingState) 
+            {
+                stateMachine.ChangeState(creature.DeathState);
+            }
+        }
     }
 
     public override void PhysicsUpdate()

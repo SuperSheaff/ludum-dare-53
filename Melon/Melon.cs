@@ -33,7 +33,7 @@ public class Melon : MonoBehaviour
         boxCollider.enabled = true;
     }
 
-     public void DestroyMelon()
+    public void DestroyMelon()
     {
         Destroy(this.gameObject);
     }

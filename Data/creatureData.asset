@@ -17,3 +17,8 @@ MonoBehaviour:
   InteractCooldownTime: 0.33
   baseMoveRange: 100
   destinationThreshold: 0.1
+  moodDrainRate: 1
+  MelonMoodBoost: 50
+  eggDuration: 5
+  eggLayChance: 0.01
+  layingEggCooldownTime: 20

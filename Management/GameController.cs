@@ -11,16 +11,18 @@ public class GameController : MonoBehaviour
 
     public Camera MainCamera;
     public GameObject CreaturePrefab;
-
     public GeneralAudioManager AudioManager;
+
     private Player player;
+    private GameObject creature;
 
     private void Start() 
     {
         AudioManager    = GetComponent<GeneralAudioManager>();
         player          = GameObject.FindWithTag("Player").GetComponent<Player>();
 
-        Instantiate(CreaturePrefab, transform.position, transform.rotation, transform);
+        // creature = Resources.Load("Creature") as GameObject;
+        // Instantiate(creature, transform.position, transform.rotation, transform);
     }
     
     // Update is called once per frame

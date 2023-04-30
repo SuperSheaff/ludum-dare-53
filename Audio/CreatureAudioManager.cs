@@ -16,11 +16,6 @@ public class CreatureAudioManager : MonoBehaviour
         {
             instance = this;
         }
-        else 
-        {
-            Destroy(gameObject);
-            return;
-        }
 
         foreach (GameSound sound in gameSounds)
         {
