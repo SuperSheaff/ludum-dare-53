@@ -95,8 +95,8 @@ public class Creature : MonoBehaviour
             spriteRenderer          = GetComponent<SpriteRenderer>();
             gameController          = GameObject.FindWithTag("GameController").GetComponent<GameController>();
 
-            StateMachine.Initialize(EggState);
             SetMood(60f);
+            StateMachine.Initialize(EggState);
 
             referenceVelocity       = Vector2.zero;
             Core.Movement.SetVelocityZero();

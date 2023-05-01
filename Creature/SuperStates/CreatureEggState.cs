@@ -20,6 +20,7 @@ public class CreatureEggState : CreatureState
         base.Enter();
 
         eggTimeElapsed = 0f;
+
     }
 
     public override void Exit()

@@ -8,11 +8,18 @@ public class Melon : MonoBehaviour
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
 
+    private MelonPlant melonPlant;
+    private bool melonPickedOffPlant;
+
     // Start is called before the first frame update
     void Start()
     {
         boxCollider     = GetComponent<BoxCollider2D>();
         spriteRenderer   = GetComponent<SpriteRenderer>();
+
+        melonPickedOffPlant = false;
+
+        melonPlant = null;
     }
 
     // Update is called once per frame
@@ -21,8 +28,19 @@ public class Melon : MonoBehaviour
         
     }
 
+    public void SetMelonPlant(MelonPlant melonPlant)
+    {
+        this.melonPlant = melonPlant;
+    }
+
     public void DisableMelon()
     {
+        if (!melonPickedOffPlant) 
+        {
+            melonPickedOffPlant = true;
+            melonPlant.MelonTaken();
+        }
+
         spriteRenderer.enabled  = false;
         boxCollider.enabled     = false;
     }
@@ -37,4 +55,6 @@ public class Melon : MonoBehaviour
     {
         Destroy(this.gameObject);
     }
+
+
 }

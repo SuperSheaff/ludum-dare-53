@@ -5,6 +5,8 @@ using UnityEngine;
 public class CreaturePreScremState : CreatureState
 {
 
+    private float preScremTimeElapsed;
+
     public CreaturePreScremState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
     }
@@ -17,6 +19,9 @@ public class CreaturePreScremState : CreatureState
     public override void Enter()
     {
         base.Enter();
+
+        preScremTimeElapsed = 0f;
+        // creature.creatureAudioManager.PlaySound("PreScrem");
     }
 
     public override void Exit()
@@ -30,17 +35,21 @@ public class CreaturePreScremState : CreatureState
         // core.Movement.checkIfShouldFlip(xInput);
 
         core.Movement.SetVelocityZero();
+
+        preScremTimeElapsed += Time.deltaTime;
+
+        if (preScremTimeElapsed >= creatureData.preScremDuration)
+        {
+            if (!isExitingState) 
+            {
+                stateMachine.ChangeState(creature.ScremState);
+            }
+        }
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-    }
-
-    public override void AnimationFinishedTrigger()
-    {
-        base.AnimationFinishedTrigger();
-        stateMachine.ChangeState(creature.ScremState);
     }
 
 }

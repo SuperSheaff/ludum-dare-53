@@ -75,6 +75,7 @@ public class PlayerIdleState : PlayerParentState
                             player.SetCarriedMelon(melon);
                             player.SetIsCarryingMelon(true);
                             player.StartInteractCooldown();
+                            // player.playerAudioManager.PlaySound("PlayerPicksUpMelon");
                             stateMachine.ChangeState(player.CarryMelonIdleState);
                         }
                     }

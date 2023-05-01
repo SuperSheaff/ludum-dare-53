@@ -19,6 +19,8 @@ public class PlayerCarryCreatureMoveState : PlayerParentState
     {
         base.Enter();
         referenceVelocity = Vector3.zero;
+
+        // player.playerAudioManager.PlaySound("PlayerMove");
     }
 
     public override void Exit()

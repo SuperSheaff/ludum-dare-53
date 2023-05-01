@@ -6,6 +6,7 @@ public class CreatureLayingEggState : CreatureState
 {
 
     private GameObject creaturePrefab;
+    private float layingEggTimeElapsed;
 
     public CreatureLayingEggState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -19,6 +20,8 @@ public class CreatureLayingEggState : CreatureState
     public override void Enter()
     {
         base.Enter();
+
+        layingEggTimeElapsed = 0f;
     }
 
     public override void Exit()
@@ -31,19 +34,23 @@ public class CreatureLayingEggState : CreatureState
         base.LogicUpdate();
 
         core.Movement.SetVelocityZero();
+
+        layingEggTimeElapsed += Time.deltaTime;
+
+        if (layingEggTimeElapsed >= creatureData.layingEggDuration)
+        {
+            if (!isExitingState) 
+            {
+                creature.LayEgg();
+                creature.StartLayingEggCooldown();
+                stateMachine.ChangeState(creature.IdleState);
+            }
+        }
+
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-    }
-
-    public override void AnimationFinishedTrigger()
-    {
-        base.AnimationFinishedTrigger();
-        
-        creature.LayEgg();
-        creature.StartLayingEggCooldown();
-        stateMachine.ChangeState(creature.IdleState);
     }
 }
