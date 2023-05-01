@@ -20,7 +20,7 @@ MonoBehaviour:
   moodDrainRate: 2
   MelonMoodBoost: 50
   preScremDuration: 6.327
-  scremDuration: 10
+  scremDuration: 7
   mlemDuration: 5
   eggDuration: 5
   layingEggDuration: 3.181

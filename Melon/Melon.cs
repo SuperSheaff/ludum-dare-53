@@ -18,8 +18,6 @@ public class Melon : MonoBehaviour
         spriteRenderer   = GetComponent<SpriteRenderer>();
 
         melonPickedOffPlant = false;
-
-        melonPlant = null;
     }
 
     // Update is called once per frame

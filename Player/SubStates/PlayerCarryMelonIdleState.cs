@@ -52,7 +52,7 @@ public class PlayerCarryMelonIdleState : PlayerParentState
                 {
                     creature = player.GetTouchedCreature();
 
-                    if (creature != null)
+                    if (creature != null && creature.GetCanBeFed())
                     {
                         creature.FeedCreature();
                         melon.DestroyMelon();

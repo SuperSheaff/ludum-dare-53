@@ -6,6 +6,7 @@ public class CreatureMlemState : CreatureState
 {
 
     private float mlemTimeElapsed;
+    private bool mlemStartFlag;
 
     public CreatureMlemState(Creature creature, CreatureStateMachine stateMachine, CreatureData creatureData, string animatorBoolName) : base(creature, stateMachine, creatureData, animatorBoolName)
     {
@@ -20,13 +21,21 @@ public class CreatureMlemState : CreatureState
     {
         base.Enter();
 
-        mlemTimeElapsed = 0f;
+        if (mlemStartFlag != true)
+        {
+            mlemTimeElapsed = 0f;
+            mlemStartFlag = true;
+        }
+
         creature.SetCanPickupCreature(true);
+        creature.creatureAudioManager.PlayAudio("CreatureMLEMv1");
     }
 
     public override void Exit()
     {
         base.Exit();
+        
+        creature.SetCanPickupCreature(false);
     }
 
     public override void LogicUpdate()
@@ -46,6 +55,7 @@ public class CreatureMlemState : CreatureState
                     creature.SetMood(90f);
                 }
 
+                mlemStartFlag = false;
                 stateMachine.ChangeState(creature.LayingEggState);
             }
         }

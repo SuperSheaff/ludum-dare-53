@@ -22,6 +22,7 @@ public class CreatureLayingEggState : CreatureState
         base.Enter();
 
         layingEggTimeElapsed = 0f;
+        creature.creatureAudioManager.PlayAudio("CreatureLayingEggv1");
     }
 
     public override void Exit()

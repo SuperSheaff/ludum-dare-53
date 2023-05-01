@@ -39,6 +39,8 @@ public class Creature : MonoBehaviour
         public CreatureAudioManager     creatureAudioManager    { get; private set; }
         public SpriteRenderer           spriteRenderer          { get; private set; }
         public GameController           gameController          { get; private set; }
+        public PolygonCollider2D        playAreaCollider        { get; private set; }
+        public GameObject               CreaturesContainer      { get; private set; }
 
     #endregion
 
@@ -57,11 +59,11 @@ public class Creature : MonoBehaviour
     #region Other Variables
 
         public GameObject CreaturePrefab;
-        public GameObject CreaturesContainer;
         public GameObject eggObject;
 
         private float layingEggCooldownStartTime = -20f;
         private bool canPickupCreature;
+        private bool canBeFed;
         private Vector2 workspace;
         private Vector2 referenceVelocity;
 
@@ -94,6 +96,8 @@ public class Creature : MonoBehaviour
             creatureAudioManager    = GetComponent<CreatureAudioManager>();
             spriteRenderer          = GetComponent<SpriteRenderer>();
             gameController          = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+            playAreaCollider        = GameObject.FindWithTag("CreatureBounds").GetComponent<PolygonCollider2D>();
+            CreaturesContainer      = GameObject.FindWithTag("CreatureContainer");
 
             SetMood(60f);
             StateMachine.Initialize(EggState);
@@ -101,6 +105,7 @@ public class Creature : MonoBehaviour
             referenceVelocity       = Vector2.zero;
             Core.Movement.SetVelocityZero();
             canPickupCreature       = false;
+            canBeFed                = false;
         }
 
         private void Update() {
@@ -129,9 +134,27 @@ public class Creature : MonoBehaviour
 
         public void SetRandomMoveLocation() 
         {
-            float xPos = Random.Range(transform.position.x - GetMoveRange(), transform.position.x + GetMoveRange());
-            float yPos = Random.Range(transform.position.y - GetMoveRange(), transform.position.y + GetMoveRange());
-            randomMoveLocation = new Vector2(xPos, yPos);
+            Vector2 randomPoint = Vector2.zero;
+            int maxAttempts = 5;
+            int attempts = 0;
+
+            do
+            {
+                // Generate a random point within the polygon collider bounds
+                randomPoint = new Vector2(
+                    Random.Range(transform.position.x - GetMoveRange(), transform.position.x + GetMoveRange()),
+                    Random.Range(transform.position.y - GetMoveRange(), transform.position.y + GetMoveRange())
+                );
+
+                // Check if the point is inside the polygon collider
+                if (playAreaCollider.OverlapPoint(randomPoint))
+                {
+                    break;
+                }
+                attempts++;
+            } while (attempts < maxAttempts);
+
+            randomMoveLocation = randomPoint;
         }
 
         public void SetMood(float value) 
@@ -142,6 +165,11 @@ public class Creature : MonoBehaviour
         public void SetCanPickupCreature(bool value) 
         {
             canPickupCreature = value;
+        }
+
+        public void SetCanBeFed(bool value) 
+        {
+            canBeFed = value;
         }
 
     #endregion
@@ -183,6 +211,11 @@ public class Creature : MonoBehaviour
             return canPickupCreature;
         }
 
+        public bool GetCanBeFed() 
+        {
+            return canBeFed;
+        }
+
     #endregion
 
     #region Trigger Functions
@@ -211,12 +244,12 @@ public class Creature : MonoBehaviour
 
         public void LayEgg()
         {
-            eggObject = Instantiate(CreaturePrefab, transform.position, transform.rotation);
+            eggObject = Instantiate(CreaturePrefab, new Vector3(transform.position.x, transform.position.y + 16f, transform.position.z), transform.rotation, CreaturesContainer.transform);
         }
 
         public void PickupCreature()
         {
-            spriteRenderer.enabled  = false;
+            spriteRenderer.enabled          = false;
             creatureBoxCollider.enabled     = false;
 
             StateMachine.ChangeState(CarriedState);

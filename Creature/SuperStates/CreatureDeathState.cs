@@ -17,6 +17,8 @@ public class CreatureDeathState : CreatureState
     public override void Enter()
     {
         base.Enter();
+
+        creature.creatureAudioManager.PlayAudio("CreatureDeath");
     }
 
     public override void Exit()

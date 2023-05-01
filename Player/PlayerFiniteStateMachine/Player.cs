@@ -86,7 +86,8 @@ public class Player : MonoBehaviour
 
     #region Unity Callback Functions
 
-        private void Awake() {
+        private void Awake() 
+        {
 
             Core = GetComponentInChildren<Core>();
 
@@ -100,7 +101,8 @@ public class Player : MonoBehaviour
             CarryCreatureMoveState  = new PlayerCarryCreatureMoveState(this, StateMachine, playerData, "carryCreatureMove");
         }
 
-        private void Start() {
+        private void Start() 
+        {
             playerAnimator      = GetComponent<Animator>();
             InputHandler        = GetComponent<PlayerInputHandler>();
             playerRigidBody     = GetComponent<Rigidbody2D>();
@@ -110,29 +112,17 @@ public class Player : MonoBehaviour
             StateMachine.Initialize(IdleState);
 
             referenceVelocity       = Vector2.zero;
-            RespawnPoint.position   = StartingSpawn.position;
             Core.Movement.SetVelocityZero();
         }
 
-        private void Update() {
+        private void Update() 
+        {
             Core.LogicUpdate();
             StateMachine.CurrentState.LogicUpdate();   
-
-
-            
-
-             // check if the interact button was pressed
-            // if (InputHandler.InteractButtonPressed)
-            // {
-            //     if (Time.time > player.interactCooldown)
-            //     {
-            //         player.interactCooldown = Time.time + player.interactCooldownDuration;
-            //         OnInteractInput?.Invoke();
-            //     }
-            // }
         }
 
-        private void FixedUpdate() {
+        private void FixedUpdate() 
+        {
             StateMachine.CurrentState.PhysicsUpdate();    
         }
 

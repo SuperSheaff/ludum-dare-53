@@ -20,13 +20,17 @@ public class CreaturePreScremState : CreatureState
     {
         base.Enter();
 
+        creature.SetCanBeFed(true);
         preScremTimeElapsed = 0f;
-        // creature.creatureAudioManager.PlaySound("PreScrem");
+        creature.creatureAudioManager.PlayAudio("CreaturePreSCREMv1");
     }
 
     public override void Exit()
     {
         base.Exit();
+
+        creature.SetCanBeFed(false);
+        creature.creatureAudioManager.StopAudio();
     }
 
     public override void LogicUpdate()

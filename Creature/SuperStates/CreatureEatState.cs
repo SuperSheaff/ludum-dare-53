@@ -17,6 +17,8 @@ public class CreatureEatState : CreatureState
     public override void Enter()
     {
         base.Enter();
+
+        creature.creatureAudioManager.PlayAudio("CreatureEatingMelonv1");
     }
 
     public override void Exit()

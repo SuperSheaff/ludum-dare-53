@@ -53,7 +53,6 @@ public class PlayerCarryCreatureIdleState : PlayerParentState
                     if (creature != null)
                     {
                         player.gameController.CreatureDelivered();
-                        // player.playerAudioManager.PlaySound("PlayerDeliversCreature");
                         creature.DestroySelf();
                         player.SetCarriedCreature(null);
                         player.SetIsCarryingCreature(false);

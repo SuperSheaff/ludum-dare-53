@@ -20,12 +20,18 @@ public class CreatureScremState : CreatureState
     {
         base.Enter();
 
+
+        creature.SetCanBeFed(true);
         scremTimeElapsed = 0f;
+        creature.creatureAudioManager.PlayAudio("CreatureSCREMv1");
     }
 
     public override void Exit()
     {
         base.Exit();
+
+        creature.SetCanBeFed(false);
+        creature.creatureAudioManager.StopAudio();
     }
 
     public override void LogicUpdate()

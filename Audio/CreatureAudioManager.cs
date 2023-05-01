@@ -1,53 +1,57 @@
 using UnityEngine.Audio;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CreatureAudioManager : MonoBehaviour
 {
+    public static CreatureAudioManager Instance { get; private set; }
 
-    public GameSound[] gameSounds;
+    [SerializeField]
+    private List<AudioClip> audioClips = new List<AudioClip>();
 
-    public static CreatureAudioManager instance;
+    private Dictionary<string, AudioClip> audioClipDictionary = new Dictionary<string, AudioClip>();
 
-    void Awake() 
+    private AudioSource audioSource;
+
+    private void Awake()
     {
-        
-        if (instance == null) 
+        // Create singleton instance
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
-        foreach (GameSound sound in gameSounds)
+        // Create dictionary of audio clips
+        foreach (AudioClip clip in audioClips)
         {
-            sound.source                = gameObject.AddComponent<AudioSource>();
-            sound.source.clip           = sound.clip;
-            sound.source.volume         = sound.volume;
-            sound.source.pitch          = sound.pitch;
-            sound.source.loop           = sound.loop;
-            sound.source.spatialBlend   = sound.spatialBlend;
+            audioClipDictionary.Add(clip.name, clip);
+        }
+
+        // Get audio source component
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
     }
 
-    public void PlaySound(string soundName)
+    public void PlayAudio(string clipName, float volume = 1.0f)
     {
-        GameSound sound = Array.Find(gameSounds, sound => sound.name == soundName);
-        if (sound == null) 
+        if (audioClipDictionary.ContainsKey(clipName))
         {
-            Debug.LogWarning("Sound (start): " + soundName + " not found!");
-            return;
+            audioSource.spatialBlend = 1f; // Full 3D spatialization
+            audioSource.PlayOneShot(audioClipDictionary[clipName], volume);
         }
-        sound.source.Play();
+        else
+        {
+            Debug.LogWarning("Audio clip " + clipName + " not found in audio manager.");
+        }
     }
 
-    public void StopSound(string soundName)
+    public void StopAudio()
     {
-        GameSound sound = Array.Find(gameSounds, sound => sound.name == soundName);
-        if (sound == null) 
-        {
-            Debug.LogWarning("Sound (stop): " + soundName + " not found!");
-            return;
-        }
-        sound.source.Stop();
+        audioSource.Stop();
     }
-
 }

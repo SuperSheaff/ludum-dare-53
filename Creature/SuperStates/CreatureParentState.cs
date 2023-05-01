@@ -19,11 +19,15 @@ public class CreatureParentState : CreatureState
     public override void Enter()
     {
         base.Enter();
+        
+        creature.SetCanBeFed(true);
     }
 
     public override void Exit()
     {
         base.Exit();
+
+        creature.SetCanBeFed(false);
     }
 
     public override void LogicUpdate()
@@ -60,6 +64,8 @@ public class CreatureParentState : CreatureState
         localMood = Mathf.Max(0f, localMood);
 
         creature.SetMood(localMood);
+        creature.creatureAnimator.SetFloat("mood", localMood / 100);
+
     }
 
     public override void PhysicsUpdate()

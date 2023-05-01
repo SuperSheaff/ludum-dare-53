@@ -11,7 +11,11 @@ public class GameController : MonoBehaviour
 
     public Camera MainCamera;
     public GameObject CreaturePrefab;
+    public GameObject CreaturesContainer;
     public GeneralAudioManager AudioManager;
+
+    public Transform creatureStartSpawn;
+    public Transform playerStartSpawn;
 
     public Text DeadCreaturesText;
     public Text DeliveredCreaturesText;
@@ -20,13 +24,17 @@ public class GameController : MonoBehaviour
     private int deliveredCreatures;
 
     private Player player;
+
     private GameObject creature;
+    private DeliverySpot deliverySpot;
 
     private void Start() 
     {
         AudioManager        = GetComponent<GeneralAudioManager>();
         player              = GameObject.FindWithTag("Player").GetComponent<Player>();
+        deliverySpot        = GameObject.FindWithTag("Delivery").GetComponent<DeliverySpot>();
 
+        AudioManager.PlaySound("music");
         startGame();
     }
     
@@ -36,6 +44,21 @@ public class GameController : MonoBehaviour
 
         updateDeadCreaturesText();
         updateDeliveredCreaturesText();
+
+        if (deliveredCreatures >= 10)
+        {
+            WinGame();
+        }
+
+         if (deadCreatures >= 3)
+        {
+            LoseGame();
+        }
+
+        if (CreaturesContainer.transform.childCount <= 0)
+        {
+            Instantiate(CreaturePrefab, creatureStartSpawn.position, creatureStartSpawn.rotation, CreaturesContainer.transform);
+        }
     }
 
     
@@ -44,9 +67,10 @@ public class GameController : MonoBehaviour
     {
         deadCreatures       = 0;
         deliveredCreatures  = 0;
+
+        player.transform.position = playerStartSpawn.position;
+        Instantiate(CreaturePrefab, creatureStartSpawn.position, creatureStartSpawn.rotation, CreaturesContainer.transform);
     }
-
-
 
     private void updateDeadCreaturesText() 
     {
@@ -64,6 +88,12 @@ public class GameController : MonoBehaviour
 
     public void WinGame() 
     {
+        Debug.Log("Game Won");
+    }
+
+    public void LoseGame() 
+    {
+        Debug.Log("Game Over");
     }
 
     public void CreatureDied()
@@ -74,5 +104,7 @@ public class GameController : MonoBehaviour
     public void CreatureDelivered()
     {
         deliveredCreatures += 1;
+
+        deliverySpot.SetDelivered(deliveredCreatures);
     }
 }

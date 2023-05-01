@@ -56,6 +56,7 @@ public class PlayerIdleState : PlayerParentState
                             player.SetCarriedCreature(creature);
                             player.SetIsCarryingCreature(true);
                             player.StartInteractCooldown();
+                            player.playerAudioManager.PlaySound("pickup");
                             stateMachine.ChangeState(player.CarryCreatureIdleState);
                         }
                     }
@@ -75,7 +76,7 @@ public class PlayerIdleState : PlayerParentState
                             player.SetCarriedMelon(melon);
                             player.SetIsCarryingMelon(true);
                             player.StartInteractCooldown();
-                            // player.playerAudioManager.PlaySound("PlayerPicksUpMelon");
+                            player.playerAudioManager.PlaySound("pickup");
                             stateMachine.ChangeState(player.CarryMelonIdleState);
                         }
                     }

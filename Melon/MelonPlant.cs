@@ -41,7 +41,9 @@ public class MelonPlant : MonoBehaviour
     {
         if (currentMelon == null)
         {
-            GameObject newMelon = Instantiate(MelonPrefab, transform.position + Vector3.up, Quaternion.identity);
+            Vector3 spawnPosition = new Vector3(transform.position.x - 14f, transform.position.y + 4f, transform.position.z);
+
+            GameObject newMelon = Instantiate(MelonPrefab, spawnPosition + Vector3.up, Quaternion.identity);
             currentMelon = newMelon.GetComponent<Melon>();
             currentMelon.SetMelonPlant(this);
         }

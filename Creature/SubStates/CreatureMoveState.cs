@@ -53,4 +53,10 @@ public class CreatureMoveState : CreatureParentState
         base.PhysicsUpdate();
     }
 
+    public override void AnimationFinishedTrigger()
+    {
+        base.AnimationFinishedTrigger();
+
+        creature.creatureAudioManager.PlayAudio("CreatureMove");
+    }
 }
