@@ -9,6 +9,11 @@ using UnityEngine.InputSystem;
 public class GameController : MonoBehaviour
 {
 
+    public GameObject[] StorySlides;
+    public GameObject GameWinScreen;
+    public GameObject GameLoseNoneScreen;
+    public GameObject GameLoseDeadScreen;
+
     public Camera MainCamera;
     public GameObject CreaturePrefab;
     public GameObject CreaturesContainer;
@@ -22,9 +27,14 @@ public class GameController : MonoBehaviour
 
     private int deadCreatures;
     private int deliveredCreatures;
+    private int countingMsg = 1;
+
+    private float timerStartTime;
+    private bool isIntro;
+    private bool hasWon;
+    private bool hasLost;
 
     private Player player;
-
     private GameObject creature;
     private DeliverySpot deliverySpot;
 
@@ -34,41 +44,76 @@ public class GameController : MonoBehaviour
         player              = GameObject.FindWithTag("Player").GetComponent<Player>();
         deliverySpot        = GameObject.FindWithTag("Delivery").GetComponent<DeliverySpot>();
 
+        isIntro = true;
+        hasWon  = false;
+        hasLost  = false;
         AudioManager.PlaySound("music");
-        startGame();
+        // StartGame();
     }
     
     // Update is called once per frame
     void Update()
     {
-
-        updateDeadCreaturesText();
-        updateDeliveredCreaturesText();
-
         if (deliveredCreatures >= 10)
         {
             WinGame();
         }
 
-         if (deadCreatures >= 3)
+        if (deadCreatures >= 3  && !hasLost)
         {
-            LoseGame();
+            LoseDeadGame();
         }
 
-        if (CreaturesContainer.transform.childCount <= 0)
+        if (CreaturesContainer.transform.childCount <= 0 && !isIntro && !hasWon)
         {
-            Instantiate(CreaturePrefab, creatureStartSpawn.position, creatureStartSpawn.rotation, CreaturesContainer.transform);
+            AudioManager.PlaySound("loseNone");
+            LoseNoneGame();
         }
+
+        if (isIntro)
+        {
+            if (countingMsg > 24)
+            {
+                isIntro = false;
+                StartGame();
+            }
+            if (Input.GetKeyDown("space"))
+            {
+                for (int i = 0; i < StorySlides.Length; i++) 
+                {
+                    StorySlides[i].SetActive(false);
+                }
+
+                StorySlides[countingMsg].SetActive(true);
+                countingMsg++;
+            }
+        }
+
+        updateDeadCreaturesText();
+        updateDeliveredCreaturesText();
     }
 
-    
-
-    private void startGame()
+    public void StartGame()
     {
         deadCreatures       = 0;
         deliveredCreatures  = 0;
+        hasWon              = false;
+        hasLost             = false;
 
         player.transform.position = playerStartSpawn.position;
+
+        for (int i = 0; i < StorySlides.Length; i++) 
+        {
+            StorySlides[i].SetActive(false);
+        }
+
+        foreach (Transform child in CreaturesContainer.transform) {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        ClearScreens();
+        ResetTimer();
+        deliverySpot.SetDelivered(0);
         Instantiate(CreaturePrefab, creatureStartSpawn.position, creatureStartSpawn.rotation, CreaturesContainer.transform);
     }
 
@@ -86,14 +131,50 @@ public class GameController : MonoBehaviour
         DeliveredCreaturesText.text  = stashString;
     }
 
+    public void ClearScreens() 
+    {
+        GameWinScreen.SetActive(false);
+        GameLoseDeadScreen.SetActive(false);
+        GameLoseNoneScreen.SetActive(false);
+
+        for (int i = 0; i < StorySlides.Length; i++) 
+        {
+            StorySlides[i].SetActive(false);
+        }
+    }
+    
+
     public void WinGame() 
     {
-        Debug.Log("Game Won");
+        
+        hasWon = true;
+        ClearScreens();
+        foreach (Transform child in CreaturesContainer.transform) {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        GameWinScreen.SetActive(true);
     }
 
-    public void LoseGame() 
+    public void LoseDeadGame() 
     {
-        Debug.Log("Game Over");
+        hasLost = true;
+
+        ClearScreens();
+        foreach (Transform child in CreaturesContainer.transform) { 
+            GameObject.Destroy(child.gameObject);
+        }
+
+        GameLoseDeadScreen.SetActive(true);
+    }
+
+    public void LoseNoneGame() 
+    {
+        ClearScreens();
+        foreach (Transform child in CreaturesContainer.transform) { 
+            GameObject.Destroy(child.gameObject);
+        }
+        GameLoseNoneScreen.SetActive(true);
     }
 
     public void CreatureDied()
@@ -106,5 +187,10 @@ public class GameController : MonoBehaviour
         deliveredCreatures += 1;
 
         deliverySpot.SetDelivered(deliveredCreatures);
+    }
+
+    public void ResetTimer()
+    {
+        timerStartTime = Time.time;
     }
 }

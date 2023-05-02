@@ -20,6 +20,7 @@ public class CreatureIdleState : CreatureParentState
     {
         base.Enter();
 
+        creature.SetCanBeFed(true);
         idleDuration = Random.Range(1f, 3f);
         idleTimeElapsed = 0f;
     }
@@ -27,6 +28,7 @@ public class CreatureIdleState : CreatureParentState
     public override void Exit()
     {
         base.Exit();
+        creature.SetCanBeFed(false);
     }
 
     public override void LogicUpdate()
